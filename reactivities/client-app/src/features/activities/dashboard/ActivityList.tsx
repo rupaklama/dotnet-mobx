@@ -5,8 +5,10 @@ import { Activity } from "../../../app/models/activity";
 
 interface Props {
   activities: Activity[];
+  selectActivity: (id: string) => void;
+  deleteActivity(id: string): void;
 }
-const ActivityList: React.FC<Props> = ({ activities }) => {
+const ActivityList: React.FC<Props> = ({ activities, selectActivity, deleteActivity }) => {
   return (
     <Segment>
       <Item.Group divided>
@@ -23,7 +25,18 @@ const ActivityList: React.FC<Props> = ({ activities }) => {
               </Item.Description>
 
               <Item.Extra>
-                <Button floated='right' content='view' color='blue' />
+                <Button
+                  onClick={() => selectActivity(activity.id)}
+                  floated='right'
+                  content='view'
+                  color='blue'
+                />
+                <Button
+                  onClick={() => deleteActivity(activity.id)}
+                  floated='right'
+                  content='Delete'
+                  color='red'
+                />
                 <Label basic content={activity.category} />
               </Item.Extra>
             </Item.Content>
