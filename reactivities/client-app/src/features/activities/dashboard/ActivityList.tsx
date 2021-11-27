@@ -1,18 +1,15 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
+
 import { Button, Item, Label, Segment } from "semantic-ui-react";
 
-import { Activity } from "../../../app/models/activity";
 import { useStore } from "../../../app/stores/store";
 
-interface Props {
-  activities: Activity[];
-  deleteActivity(id: string): void;
-  isSubmitting: boolean;
-}
-const ActivityList: React.FC<Props> = ({ activities, deleteActivity, isSubmitting }) => {
-  const [target, setTarget] = useState("");
-
+const ActivityList = () => {
   const { activityStore } = useStore();
+  const { deleteActivity, activitiesByDate, isLoading } = activityStore;
+
+  const [target, setTarget] = useState("");
 
   const handleActivityDelete = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
     setTarget(e.currentTarget.name);
@@ -22,7 +19,7 @@ const ActivityList: React.FC<Props> = ({ activities, deleteActivity, isSubmittin
   return (
     <Segment>
       <Item.Group divided>
-        {activities.map(activity => (
+        {activitiesByDate.map(activity => (
           <Item key={activity.id}>
             <Item.Content>
               <Item.Header as='a'>{activity.title}</Item.Header>
@@ -46,7 +43,7 @@ const ActivityList: React.FC<Props> = ({ activities, deleteActivity, isSubmittin
                   floated='right'
                   content='Delete'
                   color='red'
-                  loading={isSubmitting && target === activity.id}
+                  loading={isLoading && target === activity.id}
                   name={activity.id}
                 />
                 <Label basic content={activity.category} />
@@ -59,4 +56,4 @@ const ActivityList: React.FC<Props> = ({ activities, deleteActivity, isSubmittin
   );
 };
 
-export default ActivityList;
+export default observer(ActivityList);

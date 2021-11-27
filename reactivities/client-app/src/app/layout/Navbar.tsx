@@ -3,7 +3,7 @@ import { Button, Container, Menu } from "semantic-ui-react";
 
 import { useStore } from "../stores/store";
 
-const Navbar: React.FC = () => {
+const Navbar = () => {
   const { activityStore } = useStore();
 
   return (

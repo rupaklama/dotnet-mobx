@@ -1,14 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { Container } from "semantic-ui-react";
-import { v4 as uuid } from "uuid";
 
 import { observer } from "mobx-react-lite";
 import { toJS } from "mobx";
-
-import agent from "../api/agent";
-
-import { Activity } from "../models/activity";
 
 import Navbar from "./Navbar";
 import ActivityDashboard from "../../features/activities/dashboard/ActivityDashboard";
@@ -22,12 +17,6 @@ const App = () => {
 
   // Logging observables with mobx built in method - toJS
   console.log(toJS(activityStore.activities));
-
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>(undefined);
-  const [isEditMode, setIsEditMode] = useState(false);
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     // call an action
@@ -52,48 +41,26 @@ const App = () => {
   //   setIsEditMode(false);
   // };
 
-  const handleCreateOrEditActivity = (activity: Activity) => {
-    setIsSubmitting(true);
+  // const handleCreateOrEditActivity = (activity: Activity) => {
+  //   setIsSubmitting(true);
 
-    if (activity.id) {
-      agent.Activities.update(activity).then(() => {
-        // edit activity
-        setActivities([...activities.filter(act => act.id !== activity.id), activity]);
-        setSelectedActivity(activity);
-        setIsEditMode(false);
-        setIsSubmitting(false);
-      });
-    } else {
-      // create id
-      activity.id = uuid();
+  //   activity.id
+  //     ? // edit activity
+  //       setActivities([...activities.filter(act => act.id !== activity.id), activity])
+  //     : // creat activity
+  //       setActivities([...activities, activity]);
 
-      agent.Activities.create(activity).then(() => {
-        // creat activity
-        setActivities([...activities, activity]);
+  //   setIsEditMode(false);
+  //   setSelectedActivity(activity);
+  // };
 
-        setSelectedActivity(activity);
-        setIsEditMode(false);
-        setIsSubmitting(false);
-      });
-    }
-
-    // activity.id
-    //   ? // edit activity
-    //     setActivities([...activities.filter(act => act.id !== activity.id), activity])
-    //   : // creat activity
-    //     setActivities([...activities, activity]);
-
-    // setIsEditMode(false);
-    // setSelectedActivity(activity);
-  };
-
-  const handleDeleteActivity = (id: string) => {
-    setIsSubmitting(true);
-    agent.Activities.delete(id).then(() => {
-      setActivities([...activities.filter(act => act.id !== id)]);
-      setIsSubmitting(false);
-    });
-  };
+  // const handleDeleteActivity = (id: string) => {
+  //   setIsSubmitting(true);
+  //   agent.Activities.delete(id).then(() => {
+  //     setActivities([...activities.filter(act => act.id !== id)]);
+  //     setIsSubmitting(false);
+  //   });
+  // };
 
   if (activityStore.isLoadingInitial) return <Loading />;
 
@@ -102,12 +69,7 @@ const App = () => {
       <Navbar />
 
       <Container style={{ marginTop: "7em" }}>
-        <ActivityDashboard
-          activities={activityStore.activities}
-          createOrEdit={handleCreateOrEditActivity}
-          deleteActivity={handleDeleteActivity}
-          isSubmitting={isSubmitting}
-        />
+        <ActivityDashboard />
       </Container>
     </>
   );
