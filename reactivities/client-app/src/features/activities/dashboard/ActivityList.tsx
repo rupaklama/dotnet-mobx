@@ -1,14 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Item, Label, Segment } from "semantic-ui-react";
 
 import { Activity } from "../../../app/models/activity";
+import { useStore } from "../../../app/stores/store";
 
 interface Props {
   activities: Activity[];
-  selectActivity: (id: string) => void;
   deleteActivity(id: string): void;
+  isSubmitting: boolean;
 }
-const ActivityList: React.FC<Props> = ({ activities, selectActivity, deleteActivity }) => {
+const ActivityList: React.FC<Props> = ({ activities, deleteActivity, isSubmitting }) => {
+  const [target, setTarget] = useState("");
+
+  const { activityStore } = useStore();
+
+  const handleActivityDelete = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
+    setTarget(e.currentTarget.name);
+    deleteActivity(id);
+  };
+
   return (
     <Segment>
       <Item.Group divided>
@@ -26,16 +36,18 @@ const ActivityList: React.FC<Props> = ({ activities, selectActivity, deleteActiv
 
               <Item.Extra>
                 <Button
-                  onClick={() => selectActivity(activity.id)}
+                  onClick={() => activityStore.selectActivity(activity.id)}
                   floated='right'
                   content='view'
                   color='blue'
                 />
                 <Button
-                  onClick={() => deleteActivity(activity.id)}
+                  onClick={e => handleActivityDelete(e, activity.id)}
                   floated='right'
                   content='Delete'
                   color='red'
+                  loading={isSubmitting && target === activity.id}
+                  name={activity.id}
                 />
                 <Label basic content={activity.category} />
               </Item.Extra>

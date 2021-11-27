@@ -1,24 +1,26 @@
 import React, { useState } from "react";
 import { Button, Form, Segment } from "semantic-ui-react";
-import { v4 as uuid } from "uuid";
 
 import { Activity } from "../../../app/models/activity";
+import { useStore } from "../../../app/stores/store";
 
 interface Props {
-  closeForm(): void;
-  activity: Activity | undefined;
   createOrEdit(activity: Activity): void;
+  isSubmitting: boolean;
 }
 
-const ActivityForm: React.FC<Props> = ({ closeForm, activity: selectedActivity, createOrEdit }) => {
+const ActivityForm: React.FC<Props> = ({ createOrEdit, isSubmitting }) => {
+  const { activityStore } = useStore();
+  const { selectedActivity, closeForm } = activityStore;
+
   const initialState = selectedActivity ?? {
-    id: uuid(),
-    title: " ",
-    category: " ",
-    description: " ",
-    date: " ",
-    city: " ",
-    venue: " ",
+    id: "",
+    title: "",
+    category: "",
+    description: "",
+    date: "",
+    city: "",
+    venue: "",
   };
 
   const [activity, setActivity] = useState(initialState);
@@ -46,11 +48,11 @@ const ActivityForm: React.FC<Props> = ({ closeForm, activity: selectedActivity, 
           onChange={handleInputChange}
         />
         <Form.Input placeholder='Category' value={category} name='category' onChange={handleInputChange} />
-        <Form.Input placeholder='Date' value={date} name='date' onChange={handleInputChange} />
+        <Form.Input type='date' placeholder='Date' value={date} name='date' onChange={handleInputChange} />
         <Form.Input placeholder='City' value={city} name='city' onChange={handleInputChange} />
         <Form.Input placeholder='Venue' value={venue} name='venue' onChange={handleInputChange} />
 
-        <Button floated='right' positive type='submit' content='Submit' />
+        <Button loading={isSubmitting} floated='right' positive type='submit' content='Submit' />
         <Button onClick={closeForm} floated='right' type='button' content='Cancel' />
       </Form>
     </Segment>
