@@ -1,27 +1,19 @@
-import React, { useEffect } from "react";
+import React from "react";
+import { Route, useLocation } from "react-router-dom";
 
 import { Container } from "semantic-ui-react";
 
 import { observer } from "mobx-react-lite";
-import { toJS } from "mobx";
 
 import Navbar from "./Navbar";
 import ActivityDashboard from "../../features/activities/dashboard/ActivityDashboard";
-import Loading from "./Loading";
 
-import { useStore } from "../stores/store";
+import HomePage from "../../features/home/HomePage";
+import ActivityForm from "../../features/activities/form/ActivityForm";
+import ActivityDetails from "../../features/activities/details/ActivityDetails";
 
 const App = () => {
-  // accessing activity store
-  const { activityStore } = useStore();
-
-  // Logging observables with mobx built in method - toJS
-  console.log(toJS(activityStore.activities));
-
-  useEffect(() => {
-    // call an action
-    activityStore.loadActivities();
-  }, [activityStore]);
+  const location = useLocation();
 
   // note - moved to mobx store
   // const handleSelectActivity = (id: string) => {
@@ -62,15 +54,26 @@ const App = () => {
   //   });
   // };
 
-  if (activityStore.isLoadingInitial) return <Loading />;
-
   return (
     <>
-      <Navbar />
+      <Route exact path='/' component={HomePage} />
+      <Route
+        // any routes that matches '/+routes' is going to match this particular route
+        path={"/(.+)"}
+        render={() => (
+          <>
+            <Navbar />
+            <Container style={{ marginTop: "7em" }}>
+              <Route exact path='/activities' component={ActivityDashboard} />
+              <Route path='/activities/:id' component={ActivityDetails} />
 
-      <Container style={{ marginTop: "7em" }}>
-        <ActivityDashboard />
-      </Container>
+              {/* adding key here to create a New Uncontrolled Component with Key 
+                when key/prop changes to refresh/clear/update the component */}
+              <Route key={location.key} path={["/createActivity", "/manage/:id"]} component={ActivityForm} />
+            </Container>
+          </>
+        )}
+      />
     </>
   );
 };

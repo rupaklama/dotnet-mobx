@@ -1,5 +1,4 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { v4 as uuid } from "uuid";
 
 import agent from "../api/agent";
 
@@ -20,6 +19,8 @@ class ActivityStore {
 
   // ACTIONS
   loadActivities = async () => {
+    this.isLoadingInitial = true;
+
     // note - async code goes inside try/catch
     try {
       // note - we can mutate data directly in mobx
@@ -32,9 +33,10 @@ class ActivityStore {
         // updating state
         activities.forEach(activity => {
           // modifying date
-          activity.date = activity.date.split("T")[0];
+          // activity.date = activity.date.split("T")[0];
           // adding updated activity in our list
-          this.activities.push(activity);
+          // this.activities.push(activity);
+          this.setActivity(activity);
         });
 
         // The reason for doing this is every step (tick) that updates observables in an
@@ -53,35 +55,55 @@ class ActivityStore {
     }
   };
 
+  loadActivity = async (id: string) => {
+    let activity = this.getActivity(id);
+
+    if (activity) {
+      // if we have an activity in our mobx state
+      this.selectedActivity = activity;
+      return activity;
+    } else {
+      // fetch activity & update our state
+      this.isLoadingInitial = true;
+
+      try {
+        activity = await agent.Activities.details(id);
+        // activity.date = activity.date.split("T")[0];
+        // this.activities.push(activity);
+        this.setActivity(activity);
+        runInAction(() => {
+          this.selectedActivity = activity;
+        });
+        this.setIsLoadingInitial(false);
+        return activity;
+      } catch (err) {
+        console.error(err);
+        this.setIsLoadingInitial(false);
+      }
+    }
+  };
+
+  // note - Private Helper methods which are also an Actions in mobx
+
+  // to set date & create an activity
+  private setActivity = (activity: Activity) => {
+    activity.date = activity.date.split("T")[0];
+    this.activities.push(activity);
+  };
+
+  // to check if we have an activity in our mobx state with the given 'id'
+  private getActivity = (id: string) => {
+    return this.activities.find(a => a.id === id);
+  };
+
   // note - alternate approach to solve above issue without using runInAction
   // by creating another action to wrap up 'isLoadingInitial' observable state
   setIsLoadingInitial = (state: boolean) => {
     this.isLoadingInitial = state;
   };
 
-  selectActivity = (id: string) => {
-    this.selectedActivity = this.activities.find(a => a.id === id);
-  };
-
-  cancelSelectedActivity = () => {
-    this.selectedActivity = undefined;
-  };
-
-  openForm = (id?: string) => {
-    id
-      ? // edit
-        this.selectActivity(id)
-      : this.cancelSelectedActivity();
-    this.isEditMode = true;
-  };
-
-  closeForm = () => {
-    this.isEditMode = false;
-  };
-
   createActivity = async (activity: Activity) => {
     this.isLoading = true;
-    activity.id = uuid();
 
     try {
       await agent.Activities.create(activity);
@@ -125,9 +147,6 @@ class ActivityStore {
       await agent.Activities.delete(id);
       runInAction(() => {
         this.activities = [...this.activities.filter(a => a.id !== id)];
-
-        if (this.selectedActivity?.id === id) this.cancelSelectedActivity();
-
         this.isLoading = false;
       });
     } catch (err) {

@@ -1,5 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { BrowserRouter } from "react-router-dom";
+
 import "semantic-ui-css/semantic.min.css";
 
 import "./app/layout/styles.css";
@@ -11,7 +13,9 @@ import store, { StoreContext } from "./app/stores/store";
 
 ReactDOM.render(
   <StoreContext.Provider value={store}>
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </StoreContext.Provider>,
   document.getElementById("root")
 );
