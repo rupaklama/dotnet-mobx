@@ -8,12 +8,18 @@ const sleep = (delay: number) => {
   });
 };
 
-axios.defaults.baseURL = "http://localhost:5001/api";
+// note - we want to get this from some kind of variable from .env file
+// & also we want to check if we are running in dev mode or prod mode as we
+// don't want to use this full path for published react application to avoid issues.
+// The important thing is that our app will be hosted as a static content from the Server
+// & if we use this full url path - "http://localhost:5001/api" when we are on production,
+// it's going to give us problems.
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 /* to intercept api response & do something with it */
 axios.interceptors.response.use(async response => {
   try {
-    await sleep(1000);
+    if (process.env.NODE_ENV === "development") await sleep(1000);
     return response;
   } catch (err) {
     console.log(err);
