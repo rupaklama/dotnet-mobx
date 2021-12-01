@@ -8,6 +8,7 @@ import { useStore } from "../../../app/stores/store";
 
 import ActivityList from "./ActivityList";
 import Loading from "../../../app/layout/Loading";
+import ActivityFilters from "./ActivityFilters";
 
 const ActivityDashboard = () => {
   const { activityStore } = useStore();
@@ -25,12 +26,12 @@ const ActivityDashboard = () => {
 
   return (
     <Grid>
-      <Grid.Column width='10'>
+      <Grid.Column width="10">
         <ActivityList />
       </Grid.Column>
 
-      <Grid.Column width='6'>
-        <h2>Activity filters</h2>
+      <Grid.Column width="6">
+        <ActivityFilters />
       </Grid.Column>
     </Grid>
   );

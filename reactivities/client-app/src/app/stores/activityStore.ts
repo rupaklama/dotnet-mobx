@@ -158,6 +158,7 @@ class ActivityStore {
     }
   };
 
+  // COMPUTED FUNCTIONS
   // note - Computed values are use when doing operations on Observable state
   // such as filtering, expensive calculations etc. and cache it's output for optimization
 
@@ -168,6 +169,22 @@ class ActivityStore {
   // Computed values can be created by annotating JavaScript getters with computed value
   get activitiesByDate() {
     return this.activities.slice().sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
+  }
+
+  // new array of objects with key of activity date & value as array of activities created on that particular date
+  // 2022-03-19: [Proxy, Proxy]
+  get groupedActivities() {
+    return Object.entries(
+      this.activitiesByDate.reduce((activities, activity) => {
+        // const date = format(activity.date!, "dd MMM yyyy");
+        // date is the key
+        const date = activity.date;
+        // if we have another activity with this particular date, add it into the 'key' list of same date
+        activities[date] = activities[date] ? [...activities[date], activity] : [activity];
+
+        return activities;
+      }, {} as { [key: string]: Activity[] }) // type annotation - {2022-03-19: Array(1)}
+    );
   }
 }
 
