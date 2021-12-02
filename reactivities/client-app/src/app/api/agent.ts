@@ -1,5 +1,10 @@
-import axios, { AxiosResponse } from "axios";
+import { history } from "./../../index";
+import axios, { AxiosError, AxiosResponse } from "axios";
+
+import { toast } from "react-toastify";
 import { Activity } from "./../models/activity";
+
+import store from "../stores/store";
 
 /* to delay the response */
 const sleep = (delay: number) => {
@@ -18,15 +23,78 @@ axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 /* Delaying Axios Response on development with Interceptors */
 /* to intercept api response & do something with it */
-axios.interceptors.response.use(async response => {
-  try {
-    if (process.env.NODE_ENV === "development") await sleep(1000);
+axios.interceptors.response.use(
+  async response => {
+    // try {
+    //   if (process.env.NODE_ENV === "development") await sleep(1000);
+    //   return response;
+    // } catch (err) {
+    //   console.log(err);
+    //   return Promise.reject(err);
+    // }
+
+    /* We don't want try/catch block like above now because we want to use second arg - onRejected */
+    /* onRejected - to handle server error responses */
+    await sleep(1000);
     return response;
-  } catch (err) {
-    console.log(err);
+  },
+
+  /* intercepting error response */
+  (err: AxiosError) => {
+    const { data, status, config } = err.response!; // ! - turning off TS on this line
+    console.log(err.response);
+
+    switch (status) {
+      case 400:
+        // bad request
+        if (typeof data === "string") {
+          toast.error(data);
+        }
+
+        // invalid id
+        // re-directing 400 to 404 to make it logical for the user
+        if (config.method === "get" && data.errors.hasOwnProperty("id")) {
+          history.push("/not-found");
+        }
+
+        // validation error
+        // if data contains the errors object
+        if (data.errors) {
+          const modalStateErrors = [];
+
+          // errors object - key: ['']
+          for (const key in data.errors) {
+            if (data.errors[key]) {
+              modalStateErrors.push(data.errors[key]);
+            }
+          }
+
+          /* throw this array list as the response object back to the http call */
+          // [Array(1), Array(1), Array(1), Array(1), Array(1), Array(1)]
+          throw modalStateErrors.flat();
+        }
+        // else {
+        //   toast.error(data);
+        // }
+        break;
+      case 401:
+        // not authorized
+        toast.error("unauthorized");
+        break;
+      case 404:
+        // not found
+        history.push("/not-found");
+        break;
+      case 500:
+        // stack trace for dev env
+        store.commonStore.setServerError(data);
+        history.push("/server-error");
+        break;
+    }
+
     return Promise.reject(err);
   }
-});
+);
 
 /* <T> is generic type for an axios response   */
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;

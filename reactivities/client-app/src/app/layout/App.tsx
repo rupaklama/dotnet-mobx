@@ -1,9 +1,9 @@
 import React from "react";
-import { Route, useLocation } from "react-router-dom";
+import { Route, Switch, useLocation } from "react-router-dom";
 
 import { Container } from "semantic-ui-react";
-
 import { observer } from "mobx-react-lite";
+import { ToastContainer } from "react-toastify";
 
 import Navbar from "./Navbar";
 import ActivityDashboard from "../../features/activities/dashboard/ActivityDashboard";
@@ -11,6 +11,9 @@ import ActivityDashboard from "../../features/activities/dashboard/ActivityDashb
 import HomePage from "../../features/home/HomePage";
 import ActivityForm from "../../features/activities/form/ActivityForm";
 import ActivityDetails from "../../features/activities/details/ActivityDetails";
+import TestErrors from "../../features/errors/TestError";
+import NotFound from "../../features/errors/NotFound";
+import ServerError from "../../features/errors/ServerError";
 
 const App = () => {
   const location = useLocation();
@@ -56,7 +59,8 @@ const App = () => {
 
   return (
     <>
-      <Route exact path='/' component={HomePage} />
+      <ToastContainer position="top-center" hideProgressBar />
+      <Route exact path="/" component={HomePage} />
       <Route
         // any routes that matches '/+routes' is going to match this particular route
         path={"/(.+)"}
@@ -64,12 +68,22 @@ const App = () => {
           <>
             <Navbar />
             <Container style={{ marginTop: "7em" }}>
-              <Route exact path='/activities' component={ActivityDashboard} />
-              <Route path='/activities/:id' component={ActivityDetails} />
+              <Switch>
+                <Route exact path="/activities" component={ActivityDashboard} />
+                <Route path="/activities/:id" component={ActivityDetails} />
 
-              {/* adding key here to create a New Uncontrolled Component with Key 
+                {/* adding key here to create a New Uncontrolled Component with Key 
                 when key/prop changes to refresh/clear/update the component */}
-              <Route key={location.key} path={["/createActivity", "/manage/:id"]} component={ActivityForm} />
+                <Route
+                  key={location.key}
+                  path={["/createActivity", "/manage/:id"]}
+                  component={ActivityForm}
+                />
+                <Route path="/errors" component={TestErrors} />
+                <Route path="/server-error" component={ServerError} />
+
+                <Route component={NotFound} />
+              </Switch>
             </Container>
           </>
         )}
