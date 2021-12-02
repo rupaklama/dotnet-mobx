@@ -20,6 +20,7 @@ using MediatR;
 using AutoMapper;
 using Application.Core;
 using API.Extensions;
+using FluentValidation.AspNetCore;
 
 namespace API
 {
@@ -38,7 +39,10 @@ namespace API
     public void ConfigureServices(IServiceCollection services)
     {
 
-      services.AddControllers();
+      services.AddControllers().AddFluentValidation(config =>
+      {
+        config.RegisterValidatorsFromAssemblyContaining<Create>();
+      });
       // services.AddSwaggerGen(c =>
       // {
       //   c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPIv5", Version = "v1" });

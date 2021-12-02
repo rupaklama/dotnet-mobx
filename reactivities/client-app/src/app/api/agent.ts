@@ -16,6 +16,7 @@ const sleep = (delay: number) => {
 // it's going to give us problems.
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
+/* Delaying Axios Response on development with Interceptors */
 /* to intercept api response & do something with it */
 axios.interceptors.response.use(async response => {
   try {
@@ -30,6 +31,7 @@ axios.interceptors.response.use(async response => {
 /* <T> is generic type for an axios response   */
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
+/* Http calls */
 const requests = {
   get: <T>(url: string) => axios.get<T>(url).then(responseBody),
   post: <T>(url: string, body: {}) => axios.post<T>(url, body).then(responseBody),
@@ -38,6 +40,7 @@ const requests = {
   del: <T>(url: string) => axios.delete<T>(url).then(responseBody),
 };
 
+/* Activities Endpoints */
 const Activities = {
   list: () => requests.get<Activity[]>("/activities"),
   details: (id: string) => requests.get<Activity>(`/activities/${id}`),
@@ -47,6 +50,7 @@ const Activities = {
   delete: (id: string) => requests.del<void>(`/activities/${id}`),
 };
 
+/* Export Endpoints */
 const agent = {
   Activities,
 };
