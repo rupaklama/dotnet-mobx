@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { makeAutoObservable, runInAction } from "mobx";
 
 import agent from "../api/agent";
@@ -10,7 +11,7 @@ class ActivityStore {
   selectedActivity: Activity | undefined = undefined;
   isEditMode = false;
   isLoading = false;
-  isLoadingInitial = true;
+  isLoadingInitial = false;
 
   constructor() {
     // using 'makeAutoObservable' don't require to pass down 'observable' & 'action' as second arg object - ,{}
@@ -87,7 +88,7 @@ class ActivityStore {
 
   // to set date & create an activity
   private setActivity = (activity: Activity) => {
-    activity.date = activity.date.split("T")[0];
+    activity.date = new Date(activity.date!);
     this.activities.push(activity);
   };
 
@@ -168,7 +169,7 @@ class ActivityStore {
   // computed - values marks as a getter that will derive new facts from the state and cache its output
   // Computed values can be created by annotating JavaScript getters with computed value
   get activitiesByDate() {
-    return this.activities.slice().sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
+    return this.activities.slice().sort((a, b) => a.date!.getTime() - b.date!.getTime());
   }
 
   // new array of objects with key of activity date & value as array of activities created on that particular date
@@ -178,7 +179,7 @@ class ActivityStore {
       this.activitiesByDate.reduce((activities, activity) => {
         // const date = format(activity.date!, "dd MMM yyyy");
         // date is the key
-        const date = activity.date;
+        const date = format(activity.date!, "dd MMM yyyy");
         // if we have another activity with this particular date, add it into the 'key' list of same date
         activities[date] = activities[date] ? [...activities[date], activity] : [activity];
 

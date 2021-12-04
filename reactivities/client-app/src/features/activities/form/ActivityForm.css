@@ -1,0 +1,9 @@
+@media only screen and (max-width: 767px) {
+  .ui.form .fields .ui.basic.red.label {
+    margin: 10px 0 15px 8px;
+  }
+}
+
+.ui.basic.label {
+  margin-top: 10px;
+}
