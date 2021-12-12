@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, Switch, useLocation } from "react-router-dom";
 
 import { Container } from "semantic-ui-react";
@@ -14,48 +14,30 @@ import ActivityDetails from "../../features/activities/details/ActivityDetails";
 import TestErrors from "../../features/errors/TestError";
 import NotFound from "../../features/errors/NotFound";
 import ServerError from "../../features/errors/ServerError";
+import LoginForm from "../../features/users/LoginForm";
+import { useStore } from "../stores/store";
+import Loading from "./Loading";
 
 const App = () => {
   const location = useLocation();
 
-  // note - moved to mobx store
-  // const handleSelectActivity = (id: string) => {
-  //   setSelectedActivity(activities.find(act => act.id === id));
-  // };
+  // Find auth user on initial app load or re-load
+  // This needs to be done in our root component App.tsx because it is the component
+  // that loads when our app first starts up.
+  const {
+    userStore: { token, getUser, setIsAppLoaded, isAppLoaded },
+  } = useStore();
 
-  // const handleCancelSelectActivity = () => {
-  //   setSelectedActivity(undefined);
-  // };
+  useEffect(() => {
+    if (token) {
+      // after we got the user, set setIsAppLoaded to true for loading flag below
+      getUser().finally(() => setIsAppLoaded());
+    } else {
+      setIsAppLoaded();
+    }
+  }, [getUser, setIsAppLoaded, token]);
 
-  // const handleFormOpen = (id?: string) => {
-  //   id ? handleSelectActivity(id) : handleCancelSelectActivity();
-  //   setIsEditMode(true);
-  // };
-
-  // const handleFormClose = () => {
-  //   setIsEditMode(false);
-  // };
-
-  // const handleCreateOrEditActivity = (activity: Activity) => {
-  //   setIsSubmitting(true);
-
-  //   activity.id
-  //     ? // edit activity
-  //       setActivities([...activities.filter(act => act.id !== activity.id), activity])
-  //     : // creat activity
-  //       setActivities([...activities, activity]);
-
-  //   setIsEditMode(false);
-  //   setSelectedActivity(activity);
-  // };
-
-  // const handleDeleteActivity = (id: string) => {
-  //   setIsSubmitting(true);
-  //   agent.Activities.delete(id).then(() => {
-  //     setActivities([...activities.filter(act => act.id !== id)]);
-  //     setIsSubmitting(false);
-  //   });
-  // };
+  if (!isAppLoaded) return <Loading content="loading app..." />;
 
   return (
     <>
@@ -81,6 +63,7 @@ const App = () => {
                 />
                 <Route path="/errors" component={TestErrors} />
                 <Route path="/server-error" component={ServerError} />
+                <Route path="/login" component={LoginForm} />
 
                 <Route component={NotFound} />
               </Switch>

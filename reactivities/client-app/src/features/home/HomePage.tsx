@@ -1,8 +1,13 @@
-import React from "react";
+import { observer } from "mobx-react-lite";
+
 import { Link } from "react-router-dom";
 import { Button, Container, Header, Image, Segment } from "semantic-ui-react";
+import { useStore } from "../../app/stores/store";
 
 const HomePage = () => {
+  const { userStore } = useStore();
+  const { isLoggedIn } = userStore;
+
   return (
     <Segment inverted textAlign="center" vertical className="masthead">
       <Container text>
@@ -11,11 +16,18 @@ const HomePage = () => {
           Reactivities
         </Header>
 
-        <Header as="h2" inverted content="welcome to Reactivities" />
-        <Button as={Link} to="/activities" size="huge" inverted content="Take me to the Activities!" />
+        {isLoggedIn ? (
+          <>
+            {" "}
+            <Header as="h2" inverted content="welcome to Reactivities" />
+            <Button as={Link} to="/activities" size="huge" inverted content="Go to Activities!" />
+          </>
+        ) : (
+          <Button as={Link} to="/login" size="huge" inverted content="Login!" />
+        )}
       </Container>
     </Segment>
   );
 };
 
-export default HomePage;
+export default observer(HomePage);

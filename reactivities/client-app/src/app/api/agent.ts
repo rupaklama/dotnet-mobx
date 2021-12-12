@@ -2,9 +2,10 @@ import { history } from "./../../index";
 import axios, { AxiosError, AxiosResponse } from "axios";
 
 import { toast } from "react-toastify";
-import { Activity } from "./../models/activity";
-
 import store from "../stores/store";
+
+import { Activity } from "./../models/activity";
+import { User, UserFormValues } from "../models/user";
 
 /* to delay the response */
 const sleep = (delay: number) => {
@@ -21,32 +22,47 @@ const sleep = (delay: number) => {
 // it's going to give us problems.
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
+/* sending token in request object to persist auth */
+axios.interceptors.request.use(config => {
+  const token = store.userStore.token;
+  // header! - turning off typescript to specify that we know that variable will be not null
+  if (token) config.headers!.Authorization = `Bearer ${token}`;
+  return config;
+});
+
 /* Delaying Axios Response on development with Interceptors */
 /* to intercept api response & do something with it */
 axios.interceptors.response.use(
   async response => {
-    // try {
-    //   if (process.env.NODE_ENV === "development") await sleep(1000);
-    //   return response;
-    // } catch (err) {
-    //   console.log(err);
-    //   return Promise.reject(err);
-    // }
+    /* try {
+      if (process.env.NODE_ENV === "development") await sleep(1000);
+      return response;
+    } catch (err) {
+      console.log(err);
+      return Promise.reject(err);
+    } 
+    */
 
     /* We don't want try/catch block like above now because we want to use second arg - onRejected */
-    /* onRejected - to handle server error responses */
+
     await sleep(1000);
     return response;
   },
-
+  /* onRejected - to handle Server Error Responses */
   /* intercepting error response */
   (err: AxiosError) => {
+    // data - errors object
+    // status - http codes
+    // config - http methods with 'config.method'
     const { data, status, config } = err.response!; // ! - turning off TS on this line
     console.log(err.response);
 
+    // depending on Http Codes to handle error response
     switch (status) {
+      // passing Error Messages from error object
+
       case 400:
-        // bad request
+        // bad request - Default
         if (typeof data === "string") {
           toast.error(data);
         }
@@ -57,7 +73,7 @@ axios.interceptors.response.use(
           history.push("/not-found");
         }
 
-        // validation error
+        // Validation Errors from the backend for our forms,
         // if data contains the errors object
         if (data.errors) {
           const modalStateErrors = [];
@@ -73,6 +89,8 @@ axios.interceptors.response.use(
           // [Array(1), Array(1), Array(1), Array(1), Array(1), Array(1)]
           throw modalStateErrors.flat();
         }
+
+        // note: this code is placed on the top - typeof data === "string"
         // else {
         //   toast.error(data);
         // }
@@ -86,6 +104,7 @@ axios.interceptors.response.use(
         history.push("/not-found");
         break;
       case 500:
+        // note - STORING API Error in mobx store
         // stack trace for dev env
         store.commonStore.setServerError(data);
         history.push("/server-error");
@@ -118,9 +137,17 @@ const Activities = {
   delete: (id: string) => requests.del<void>(`/activities/${id}`),
 };
 
+/* User Auth endpoints */
+const Account = {
+  current: () => requests.get<User>("/account"),
+  login: (user: UserFormValues) => requests.post<User>("/account/login", user),
+  register: (user: UserFormValues) => requests.post<User>("/account/register", user),
+};
+
 /* Export Endpoints */
 const agent = {
   Activities,
+  Account,
 };
 
 export default agent;

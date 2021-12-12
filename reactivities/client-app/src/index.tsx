@@ -14,17 +14,20 @@ import reportWebVitals from "./reportWebVitals";
 
 import store, { StoreContext } from "./app/stores/store";
 
-// history package comes with the react-router
+// to use history object in non-component files across our app
 import { createBrowserHistory } from "history";
 
 // Creating history object to use outside & inside of react components
 // note - now we can use this history object anywhere else in our application besides react components
 export const history = createBrowserHistory();
-// BrowserRouter provides 'history' object & it is also get use by useHistory hook
+// BrowserRouter provides 'history' object & it is also get use by useHistory hook,
+// this is just a note
 
 ReactDOM.render(
   <StoreContext.Provider value={store}>
-    {/* Using lower level router instead BrowserRouter & passing history object for the components*/}
+    {/* Using lower level router instead BrowserRouter & passing history object for the components,
+      to use history object in non-component files across our app
+    */}
     <Router history={history}>
       <App />
     </Router>
