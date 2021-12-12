@@ -22,7 +22,7 @@ const sleep = (delay: number) => {
 // it's going to give us problems.
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
-/* sending token in request object to persist auth */
+/* Sending current token in every single requests to persist auth */
 axios.interceptors.request.use(config => {
   const token = store.userStore.token;
   // header! - turning off typescript to specify that we know that variable will be not null

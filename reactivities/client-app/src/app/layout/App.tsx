@@ -17,6 +17,7 @@ import ServerError from "../../features/errors/ServerError";
 import LoginForm from "../../features/users/LoginForm";
 import { useStore } from "../stores/store";
 import Loading from "./Loading";
+import ModalContainer from "./ModalContainer";
 
 const App = () => {
   const location = useLocation();
@@ -29,8 +30,9 @@ const App = () => {
   } = useStore();
 
   useEffect(() => {
+    // Get Current User Object with the Token in the local storage
     if (token) {
-      // after we got the user, set setIsAppLoaded to true for loading flag below
+      // after we got the current user, set setIsAppLoaded to true for loading flag below
       getUser().finally(() => setIsAppLoaded());
     } else {
       setIsAppLoaded();
@@ -42,7 +44,9 @@ const App = () => {
   return (
     <>
       <ToastContainer position="top-center" hideProgressBar />
+      <ModalContainer />
       <Route exact path="/" component={HomePage} />
+
       <Route
         // any routes that matches '/+routes' is going to match this particular route
         path={"/(.+)"}

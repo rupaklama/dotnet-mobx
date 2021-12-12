@@ -16,6 +16,8 @@ const LoginForm = () => {
     password: "",
   });
 
+  const [isError, setIsErrors] = useState(false);
+
   // validating using Yup
   const validationSchema = Yup.object({
     email: Yup.string().required("email is required"),
@@ -23,7 +25,7 @@ const LoginForm = () => {
   });
 
   const handleFormSubmit = (data: UserFormValues) => {
-    userStore.login(data);
+    userStore.login(data).catch(() => setIsErrors(true));
   };
 
   return (
@@ -32,10 +34,10 @@ const LoginForm = () => {
       initialValues={formData}
       onSubmit={values => handleFormSubmit(values)}
     >
-      {({ values: { email, password }, handleChange, handleSubmit, isSubmitting }) => (
+      {({ values: { email, password }, handleChange, handleSubmit, errors }) => (
         <Form className="ui form" onSubmit={handleSubmit} autoComplete="off">
           <Form.Group widths="equal">
-            <Form.Input placeholder="Email" name="email" value={email} onChange={handleChange} />
+            <Form.Input placeholder="Email" name="email" type="email" value={email} onChange={handleChange} />
             <ErrorMessage name="email" render={err => <Label basic color="red" content={err} />} />
           </Form.Group>
 
@@ -50,7 +52,9 @@ const LoginForm = () => {
             <ErrorMessage name="password" render={err => <Label basic color="red" content={err} />} />
           </Form.Group>
 
-          <Button positive content="Login" type="submit" fluid loading={isSubmitting} />
+          {isError && <p style={{ color: "red" }}>Invalid password or email</p>}
+
+          <Button positive content="Login" type="submit" fluid />
         </Form>
       )}
     </Formik>
