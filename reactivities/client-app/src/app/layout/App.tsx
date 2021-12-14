@@ -44,7 +44,10 @@ const App = () => {
   return (
     <>
       <ToastContainer position="top-center" hideProgressBar />
+
+      {/* note - Modal should be open from anywhere in our app, just like Toast above. High/top level in our app */}
       <ModalContainer />
+
       <Route exact path="/" component={HomePage} />
 
       <Route

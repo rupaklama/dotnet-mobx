@@ -1,6 +1,7 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 import { history } from "../..";
 import agent from "../api/agent";
+import store from "./store";
 
 import { User, UserFormValues } from "../models/user";
 
@@ -88,6 +89,9 @@ export default class UserStore {
 
       // re-direct user after login
       history.push("/activities");
+
+      // close modal - calling action in another store to update our state
+      store.modalStore.closeModal();
     } catch (err) {
       // to catch this error & display it in the login form
       throw err;
@@ -102,5 +106,26 @@ export default class UserStore {
 
     // re-direct to homepage
     history.push("/");
+  };
+
+  // register user
+  register = async (creds: UserFormValues) => {
+    try {
+      const user = await agent.Account.register(creds);
+
+      runInAction(() => {
+        this.token = user.token;
+        this.user = user;
+      });
+
+      // re-direct user after login
+      history.push("/activities");
+
+      // close modal - calling action in another store to update our state
+      store.modalStore.closeModal();
+    } catch (err) {
+      // to catch this error & display it in the login form
+      throw err;
+    }
   };
 }

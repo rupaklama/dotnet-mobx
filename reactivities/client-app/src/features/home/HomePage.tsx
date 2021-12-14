@@ -5,6 +5,7 @@ import { Button, Container, Header, Image, Segment } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
 
 import LoginForm from "../users/LoginForm";
+import RegisterForm from "../users/RegisterForm";
 
 const HomePage = () => {
   const { userStore, modalStore } = useStore();
@@ -16,7 +17,7 @@ const HomePage = () => {
       <Container text>
         <Header as="h1" inverted>
           <Image size="massive" src="/assets/logo.png" alt="logo" style={{ marginBottom: 12 }} />
-          Reactivities
+          KamPost
         </Header>
 
         {isLoggedIn ? (
@@ -27,7 +28,7 @@ const HomePage = () => {
         ) : (
           <>
             <Button onClick={() => openModal(<LoginForm />)} size="huge" inverted content="Login!" />
-            <Button onClick={() => openModal(<h1>Register</h1>)} size="huge" inverted content="Register!" />
+            <Button onClick={() => openModal(<RegisterForm />)} size="huge" inverted content="Register!" />
           </>
         )}
       </Container>
