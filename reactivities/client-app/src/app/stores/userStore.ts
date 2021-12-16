@@ -16,6 +16,8 @@ export default class UserStore {
 
   isAppLoaded = false;
 
+  refreshTokenTimeout: any;
+
   constructor() {
     makeAutoObservable(this);
 
@@ -70,8 +72,12 @@ export default class UserStore {
       const user = await agent.Account.current();
 
       runInAction(() => {
+        // this.token = user.token;
         this.user = user;
       });
+
+      // on new token, starts a timer
+      this.startRefreshTokenTimer(user);
     } catch (err) {
       console.error(err);
     }
@@ -86,6 +92,9 @@ export default class UserStore {
         this.token = user.token;
         this.user = user;
       });
+
+      // on new token, starts a timer
+      this.startRefreshTokenTimer(user);
 
       // re-direct user after login
       history.push("/activities");
@@ -118,6 +127,9 @@ export default class UserStore {
         this.user = user;
       });
 
+      // on new token, starts a timer
+      this.startRefreshTokenTimer(user);
+
       // re-direct user after login
       history.push("/activities");
 
@@ -128,4 +140,44 @@ export default class UserStore {
       throw err;
     }
   };
+
+  // set new token & this will update our local storage as well
+  refreshToken = async () => {
+    // stop timer
+    this.stopRefreshTokenTimer();
+
+    try {
+      const user = await agent.Account.refreshToken();
+
+      runInAction(() => (this.user = user));
+
+      this.token = user.token;
+
+      // note - when we have a new token, we will start timer
+      this.startRefreshTokenTimer(user);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // check when our Token is about to Expire so that we can automatically go and refresh a token
+  private startRefreshTokenTimer(user: User) {
+    // accessing our token & get the contents of the token but decoded as well
+    // because we want to check out the expiry date.
+    // atob func is to get decoded token
+    // split(".")[1] - second part of token from the http response payload
+    const jwtToken = JSON.parse(atob(user.token.split(".")[1]));
+    // to get the expiry time
+    const expires = new Date(jwtToken.exp * 1000);
+    // setting our timeout value to 60 secs before our token expires
+    const timeout = expires.getTime() - Date.now() - 60 * 1000;
+    // note - when we get to 60 secs prior to our token expiring,
+    // we will attempt to refresh our token in the background
+    this.refreshTokenTimeout = setTimeout(this.refreshToken, timeout);
+  }
+
+  // to stop Refresh Token timer
+  private stopRefreshTokenTimer() {
+    clearTimeout(this.refreshTokenTimeout);
+  }
 }

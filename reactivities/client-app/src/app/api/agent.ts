@@ -54,7 +54,7 @@ axios.interceptors.response.use(
     // data - errors object
     // status - http codes
     // config - http methods with 'config.method'
-    const { data, status, config } = err.response!; // ! - turning off TS on this line
+    const { data, status, config, headers } = err.response!; // ! - turning off TS on this line
     console.log(err.response);
 
     // depending on Http Codes to handle error response
@@ -96,8 +96,17 @@ axios.interceptors.response.use(
         // }
         break;
       case 401:
-        // not authorized
-        toast.error("unauthorized");
+        // HTTP WWW-Authenticate header is a response-type header.
+        // It serves as a support for various authentication mechanisms which are important
+        // to control access to pages and other resources as well.
+        // WWW-Authenticate header is sent along with a 401 Unauthorized response.
+        // note - if 401 & invalid token
+        if (status === 401 && headers["www-authenticate"]?.startsWith('Bearer error="invalid_token"')) {
+          // note - to get access to that header, this needs to get expose by our api server
+          // logout user if token is expired
+          store.userStore.logout();
+          toast.error("Session expired - please login again");
+        }
         break;
       case 404:
         // not found
@@ -142,6 +151,7 @@ const Account = {
   current: () => requests.get<User>("/account"),
   login: (user: UserFormValues) => requests.post<User>("/account/login", user),
   register: (user: UserFormValues) => requests.post<User>("/account/register", user),
+  refreshToken: () => requests.post<User>("/account/refreshToken", {}),
 };
 
 /* Export Endpoints */
