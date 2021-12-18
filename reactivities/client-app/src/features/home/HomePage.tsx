@@ -22,8 +22,8 @@ const HomePage = () => {
 
         {isLoggedIn ? (
           <>
-            <Header as="h2" inverted content="welcome to Reactivities" />
-            <Button as={Link} to="/activities" size="huge" inverted content="Go to Activities!" />
+            <Header as="h2" inverted content="welcome to KamPost" />
+            <Button as={Link} to="/activities" size="huge" inverted content="Go to Recent Posts!" />
           </>
         ) : (
           <>

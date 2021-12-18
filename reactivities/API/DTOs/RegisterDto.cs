@@ -15,8 +15,9 @@ namespace API.DTOs
     [EmailAddress]
     public string Email { get; set; }
 
+    // password to be minimum of four characters with lowercase, uppercase & number
     [Required]
-    [RegularExpression("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$", ErrorMessage = "Password must be complex")]
+    [RegularExpression("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$", ErrorMessage = "Password must require uppercase, lowercase, number & minimum of 4 characters")]
     public string Password { get; set; }
 
     [Required]
