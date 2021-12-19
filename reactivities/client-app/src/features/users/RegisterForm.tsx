@@ -48,7 +48,7 @@ const RegisterForm = () => {
         dirty,
       }) => (
         <Form className="ui form error" onSubmit={handleSubmit} autoComplete="off">
-          <Header as="h2" content="Sign up to KamPost" color="teal" textAlign="center" />
+          <Header as="h2" content="Sign up to KamPostEvents" color="teal" textAlign="center" />
 
           <Form.Group widths="equal">
             <Form.Input

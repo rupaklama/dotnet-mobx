@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react-lite";
-import { ErrorMessage, Formik } from "formik";
+import { Formik } from "formik";
 
-import { Button, Form, Header, Label } from "semantic-ui-react";
+import { Button, Form, Header } from "semantic-ui-react";
 import * as Yup from "yup";
 
 import { useStore } from "../../app/stores/store";
@@ -36,11 +36,11 @@ const LoginForm = () => {
     >
       {({ values: { email, password }, handleChange, handleSubmit, isValid, dirty }) => (
         <Form className="ui form" onSubmit={handleSubmit} autoComplete="off">
-          <Header as="h2" content="Login to KamPost" color="teal" textAlign="center" />
+          <Header as="h2" content="Login to KamPostEvents" color="teal" textAlign="center" />
 
           <Form.Group widths="equal">
             <Form.Input placeholder="Email" name="email" value={email} onChange={handleChange} />
-            <ErrorMessage name="email" render={err => <Label basic color="red" content={err} />} />
+            {/* <ErrorMessage name="email" render={err => <Label basic color="red" content={err} />} /> */}
           </Form.Group>
 
           <Form.Group widths="equal">
@@ -51,10 +51,12 @@ const LoginForm = () => {
               value={password}
               onChange={handleChange}
             />
-            <ErrorMessage name="password" render={err => <Label basic color="red" content={err} />} />
+            {/* <ErrorMessage name="password" render={err => <Label basic color="red" content={err} />} /> */}
           </Form.Group>
 
-          {isError && <p style={{ color: "red" }}>Invalid email or password</p>}
+          {isError && (
+            <p style={{ color: "red", marginBottom: "15px", marginTop: "1px" }}>Invalid email or password</p>
+          )}
 
           <Button positive content="Login" type="submit" fluid disabled={!isValid || !dirty} />
         </Form>

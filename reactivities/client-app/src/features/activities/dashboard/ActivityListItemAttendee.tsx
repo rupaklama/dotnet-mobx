@@ -1,0 +1,24 @@
+import React from "react";
+import { observer } from "mobx-react-lite";
+import { Image, List } from "semantic-ui-react";
+import { Link } from "react-router-dom";
+
+import { Profile } from "../../../app/models/profile";
+
+interface Props {
+  attendees: Profile[];
+}
+
+const ActivityListItemAttendee: React.FC<Props> = ({ attendees }) => {
+  return (
+    <List horizontal>
+      {attendees.map(attendee => (
+        <List.Item key={attendee.username} as={Link} to={`/profiles/${attendee.username}`}>
+          <Image size="mini" circular src={attendee.image || "/assets/user.png"} />
+        </List.Item>
+      ))}
+    </List>
+  );
+};
+
+export default observer(ActivityListItemAttendee);

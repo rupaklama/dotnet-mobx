@@ -2,8 +2,10 @@ import { format } from "date-fns";
 import { makeAutoObservable, runInAction } from "mobx";
 
 import agent from "../api/agent";
+import { Profile } from "../models/profile";
 
 import { Activity } from "./../models/activity";
+import store from "./store";
 
 class ActivityStore {
   // observables state
@@ -88,6 +90,14 @@ class ActivityStore {
 
   // to set date & create an activity
   private setActivity = (activity: Activity) => {
+    const user = store.userStore.user;
+    if (user) {
+      // note - setting Activity properties
+      activity.isGoing = activity.attendees!.some(a => a.username === user.username);
+      activity.isHost = activity.hostUsername === user.username;
+      activity.host = activity.attendees?.find(x => x.username === activity.hostUsername);
+    }
+
     activity.date = new Date(activity.date!);
     this.activities.push(activity);
   };
@@ -187,6 +197,32 @@ class ActivityStore {
       }, {} as { [key: string]: Activity[] }) // type annotation - {2022-03-19: Array(1)}
     );
   }
+
+  updateAttendance = async () => {
+    const user = store.userStore.user;
+    this.isLoading = true;
+
+    try {
+      await agent.Activities.attend(this.selectedActivity!.id);
+      runInAction(() => {
+        if (this.selectedActivity?.isGoing) {
+          this.selectedActivity.attendees = this.selectedActivity.attendees?.filter(
+            a => a.username !== user?.username
+          );
+          this.selectedActivity.isGoing = false;
+        } else {
+          const attendee = new Profile(user!);
+          this.selectedActivity?.attendees?.push(attendee);
+          this.selectedActivity!.isGoing = true;
+        }
+        this.activities.push(this.selectedActivity!);
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      runInAction(() => (this.isLoading = false));
+    }
+  };
 }
 
 export default ActivityStore;

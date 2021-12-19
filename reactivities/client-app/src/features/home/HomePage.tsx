@@ -17,13 +17,13 @@ const HomePage = () => {
       <Container text>
         <Header as="h1" inverted>
           <Image size="massive" src="/assets/logo.png" alt="logo" style={{ marginBottom: 12 }} />
-          KamPost
+          Jobs, Rooms, Events and more...
         </Header>
 
         {isLoggedIn ? (
           <>
-            <Header as="h2" inverted content="welcome to KamPost" />
-            <Button as={Link} to="/activities" size="huge" inverted content="Go to Recent Posts!" />
+            <Header as="h2" inverted content="Welcome to KamPostEvents!" />
+            <Button as={Link} to="/activities" size="huge" inverted content="Go to Recent Posts" />
           </>
         ) : (
           <>

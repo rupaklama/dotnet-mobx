@@ -24,7 +24,7 @@ const ActivityDetails = () => {
   }, [id, loadActivity]);
 
   // note - instead of using optional operator '?' everywhere
-  if (isLoadingInitial || !activity) return <Loading />;
+  if (isLoadingInitial || !activity) return <Loading content="loading post details..." />;
 
   return (
     <Grid>
@@ -35,7 +35,7 @@ const ActivityDetails = () => {
       </Grid.Column>
 
       <Grid.Column width={6}>
-        <ActivityDetailedSidebar />
+        <ActivityDetailedSidebar activity={activity} />
       </Grid.Column>
     </Grid>
   );

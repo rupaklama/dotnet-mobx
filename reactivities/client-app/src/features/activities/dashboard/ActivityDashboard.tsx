@@ -22,7 +22,7 @@ const ActivityDashboard = () => {
     if (activities.length <= 1) loadActivities();
   }, [activities, loadActivities]);
 
-  if (activityStore.isLoadingInitial) return <Loading content="loading activities" />;
+  if (activityStore.isLoadingInitial) return <Loading content="loading posts" />;
 
   return (
     <Grid>
