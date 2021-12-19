@@ -1,4 +1,5 @@
 import React from "react";
+import { Plugins } from "@capacitor/core";
 import ReactDOM from "react-dom";
 import { Router } from "react-router-dom";
 
@@ -19,6 +20,8 @@ import store, { StoreContext } from "./app/stores/store";
 // to use history object in non-component files across our app
 import { createBrowserHistory } from "history";
 
+const { SplashScreen } = Plugins;
+
 // Creating history object to use outside & inside of react components
 // note - now we can use this history object anywhere else in our application besides react components
 export const history = createBrowserHistory();
@@ -36,6 +39,8 @@ ReactDOM.render(
   </StoreContext.Provider>,
   document.getElementById("root")
 );
+
+SplashScreen.hide();
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

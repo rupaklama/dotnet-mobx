@@ -4,7 +4,7 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import store from "../stores/store";
 
-import { Activity } from "./../models/activity";
+import { Activity, ActivityFormValues } from "./../models/activity";
 import { User, UserFormValues } from "../models/user";
 
 /* to delay the response */
@@ -64,7 +64,7 @@ axios.interceptors.response.use(
       case 400:
         // bad request - Default
         if (typeof data === "string") {
-          toast.error(data);
+          toast.error(data, { position: "bottom-center" });
         }
 
         // invalid id
@@ -105,7 +105,7 @@ axios.interceptors.response.use(
           // note - to get access to that header, this needs to get expose by our api server
           // logout user if token is expired
           store.userStore.logout();
-          toast.error("Session expired - please login again");
+          toast.error("Session expired - please login again", { position: "bottom-center" });
         }
         break;
       case 404:
@@ -140,9 +140,8 @@ const requests = {
 const Activities = {
   list: () => requests.get<Activity[]>("/activities"),
   details: (id: string) => requests.get<Activity>(`/activities/${id}`),
-  create: (activity: Activity) => requests.post<void>("/activities", activity),
-  update: (activity: Activity) => requests.put<void>(`/activities/${activity.id}`, activity),
-  patch: (activity: Activity) => requests.patch<void>(`/activities/${activity.id}`, activity),
+  create: (activity: ActivityFormValues) => requests.post<void>("/activities", activity),
+  update: (activity: ActivityFormValues) => requests.put<void>(`/activities/${activity.id}`, activity),
   delete: (id: string) => requests.del<void>(`/activities/${id}`),
   attend: (id: string) => requests.post<void>(`/activities/${id}/attend`, {}),
 };

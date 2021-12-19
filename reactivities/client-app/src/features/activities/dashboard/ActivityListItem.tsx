@@ -14,9 +14,12 @@ const ActivityListItem: React.FC<Props> = ({ activity }) => {
   return (
     <Segment.Group>
       <Segment>
+        {activity.isCancelled && (
+          <Label attached="top" color="red" content="Cancelled" style={{ textAlign: "center" }} />
+        )}
         <Item.Group>
           <Item>
-            <Item.Image size="tiny" circular src="/assets/user.png" />
+            <Item.Image style={{ margin: "auto" }} size="tiny" circular src="/assets/user.png" />
             <Item.Content>
               <Item.Header as={Link} to={`/activities/${activity.id}`}>
                 {activity.title}

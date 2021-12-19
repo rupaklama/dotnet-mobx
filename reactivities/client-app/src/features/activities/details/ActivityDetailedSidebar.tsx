@@ -19,8 +19,8 @@ const ActivityDetailedSidebar: React.FC<Props> = ({ activity: { attendees, host 
       </Segment>
       <Segment attached>
         <List relaxed divided>
-          {attendees.map(attendee => (
-            <Item style={{ position: "relative" }} key={attendee.username}>
+          {attendees.map((attendee, i) => (
+            <Item style={{ position: "relative" }} key={i}>
               {attendee.username === host?.username && (
                 <Label style={{ position: "absolute" }} color="orange" ribbon="right">
                   Host

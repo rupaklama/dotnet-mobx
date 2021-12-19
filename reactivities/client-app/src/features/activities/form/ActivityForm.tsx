@@ -13,31 +13,23 @@ import "./ActivityForm.css";
 import SelectInput from "./SelectInput";
 import { categoryOptions } from "../common/categoryOptions";
 import DateInput from "./DateInput";
-import { Activity } from "../../../app/models/activity";
+import { ActivityFormValues } from "../../../app/models/activity";
 
 const ActivityForm = () => {
   const history = useHistory();
   const { activityStore } = useStore();
-  const { createActivity, updateActivity, isLoading, isLoadingInitial, loadActivity } = activityStore;
+  const { createActivity, updateActivity, isLoadingInitial, loadActivity } = activityStore;
 
   const { id } = useParams<{ id: string }>();
 
-  const [activity, setActivity] = useState<Activity>({
-    id: "",
-    title: "",
-    category: "",
-    description: "",
-    date: null,
-    city: "",
-    venue: "",
-  });
+  const [activity, setActivity] = useState<ActivityFormValues>(new ActivityFormValues());
   // const { title, category, description, date, city, venue } = activity;
 
   // if id, get activity from store
   useEffect(() => {
     // activity! - overriding typescript as we know what we are doing,
     // adding '!' turns of the typescript errors on the given value
-    if (id) loadActivity(id).then(activity => setActivity(activity!));
+    if (id) loadActivity(id).then(activity => setActivity(new ActivityFormValues(activity)));
   }, [id, loadActivity]);
 
   // validating using Yup
@@ -51,9 +43,9 @@ const ActivityForm = () => {
     venue: Yup.string().required("venue is required"),
   });
 
-  const handleFormSubmit = (activity: Activity) => {
+  const handleFormSubmit = (activity: ActivityFormValues) => {
     // create activity
-    if (activity.id.length === 0) {
+    if (!activity.id) {
       let newActivity = {
         ...activity,
         id: uuid(),
@@ -128,7 +120,7 @@ const ActivityForm = () => {
 
             <Button
               disabled={isSubmitting || !isValid}
-              loading={isLoading}
+              loading={isSubmitting}
               floated="right"
               positive
               type="submit"

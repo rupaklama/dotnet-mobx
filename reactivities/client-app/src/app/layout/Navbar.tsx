@@ -11,11 +11,11 @@ const Navbar = () => {
   } = useStore();
 
   return (
-    <Menu inverted fixed="top">
+    <Menu borderless stackable tabular>
       <Container>
         <Menu.Item as={NavLink} exact to="/" header>
-          <img src="/assets/logo.png" alt="logo" style={{ marginRight: "10px" }} />
-          KamPostEvents
+          <img src="/192.png" alt="logo" style={{ marginRight: "10px" }} />
+          Kam Post Events
         </Menu.Item>
 
         <Menu.Item as={NavLink} to="/activities" name="Posts" />

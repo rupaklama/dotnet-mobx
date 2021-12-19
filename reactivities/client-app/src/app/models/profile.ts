@@ -6,7 +6,7 @@ export interface Profile {
   bio?: string;
 }
 
-/* to add additional properties */
+/* to automatically set properties based on the currently logged in user */
 export class Profile implements Profile {
   constructor(user: User) {
     this.username = user.username;

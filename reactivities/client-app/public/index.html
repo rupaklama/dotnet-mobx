@@ -2,11 +2,26 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon2.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.png" />
+
+    <!-- viewport-fit=cover - is to fit the content, 
+        minimum-scale/maximum-scale for not to change the Zoom level, default to none, 
+        user-scalable - telling browser to not to allow user to change the zoom  -->
+    <meta
+      name="viewport"
+      content="viewport-fit=cover, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"
+    />
     <meta name="theme-color" content="#000000" />
-    <meta name="description" content="Web site created using create-react-app" />
+
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="KamPost" />
+    <meta name="apple-mobile-web-app-title" content="KamPost" />
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -21,7 +36,7 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>Kam Post</title>
+    <title>Kam Post Events</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
