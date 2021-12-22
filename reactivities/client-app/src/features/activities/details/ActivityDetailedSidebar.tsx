@@ -22,7 +22,7 @@ const ActivityDetailedSidebar: React.FC<Props> = ({ activity: { attendees, host 
           {attendees.map((attendee, i) => (
             <Item style={{ position: "relative" }} key={i}>
               {attendee.username === host?.username && (
-                <Label style={{ position: "absolute" }} color="orange" ribbon="right">
+                <Label style={{ position: "absolute", zIndex: 1000 }} color="orange" ribbon="right">
                   Host
                 </Label>
               )}

@@ -149,9 +149,11 @@ export default class UserStore {
     try {
       const user = await agent.Account.refreshToken();
 
-      runInAction(() => (this.user = user));
+      runInAction(() => {
+        this.user = user;
 
-      this.token = user.token;
+        this.token = user.token;
+      });
 
       // note - when we have a new token, we will start timer
       this.startRefreshTokenTimer(user);
