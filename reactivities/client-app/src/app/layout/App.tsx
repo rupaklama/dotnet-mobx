@@ -19,6 +19,8 @@ import { useStore } from "../stores/store";
 import Loading from "./Loading";
 import ModalContainer from "./ModalContainer";
 
+import ProfilePage from "../../features/profiles/ProfilePage";
+
 const App = () => {
   const location = useLocation();
 
@@ -68,6 +70,7 @@ const App = () => {
                   path={["/createActivity", "/manage/:id"]}
                   component={ActivityForm}
                 />
+                <Route path="/profiles/:username" component={ProfilePage} />
                 <Route path="/errors" component={TestErrors} />
                 <Route path="/server-error" component={ServerError} />
                 <Route path="/login" component={LoginForm} />

@@ -6,6 +6,7 @@ import store from "../stores/store";
 
 import { Activity, ActivityFormValues } from "./../models/activity";
 import { User, UserFormValues } from "../models/user";
+import { Profile } from "../models/profile";
 
 /* to delay the response */
 const sleep = (delay: number) => {
@@ -154,10 +155,16 @@ const Account = {
   refreshToken: () => requests.post<User>("/account/refreshToken", {}),
 };
 
+/* user profile endpoints */
+const Profiles = {
+  get: (username: string) => requests.get<Profile>(`/profiles/${username}`),
+};
+
 /* Export Endpoints */
 const agent = {
   Activities,
   Account,
+  Profiles,
 };
 
 export default agent;
