@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import { Button, Card, Grid, Header, Image, Tab } from "semantic-ui-react";
 import PhotoUploadWidget from "../../app/common/imageUpload/PhotoUploadWidget";
-import { Profile } from "../../app/models/profile";
+import { Photo, Profile } from "../../app/models/profile";
 import { useStore } from "../../app/stores/store";
 
 interface Props {
@@ -11,10 +11,25 @@ interface Props {
 
 const ProfilePhotos: React.FC<Props> = ({ profile }) => {
   const {
-    profileStore: { isCurrentUser },
+    profileStore: { isCurrentUser, uploadPhoto, isUploading, isLoading, setMainPhoto, deletePhoto },
   } = useStore();
 
   const [addPhotoMode, setAddPhotoMode] = useState(false);
+  const [target, setTarget] = useState("");
+
+  const handleSetMainPhoto = (photo: Photo, e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setTarget(e.currentTarget.name);
+    setMainPhoto(photo);
+  };
+
+  const handleDeletePhoto = (photo: Photo, e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setTarget(e.currentTarget.name);
+    deletePhoto(photo);
+  };
+
+  const handlePhotoUpload = (file: Blob) => {
+    uploadPhoto(file).then(() => setAddPhotoMode(false));
+  };
 
   return (
     <Tab.Pane>
@@ -24,7 +39,7 @@ const ProfilePhotos: React.FC<Props> = ({ profile }) => {
           {isCurrentUser && (
             <Button
               floated="right"
-              basic
+              color="black"
               content={addPhotoMode ? "Cancel" : "Add Photo"}
               onClick={() => setAddPhotoMode(!addPhotoMode)}
             />
@@ -33,12 +48,35 @@ const ProfilePhotos: React.FC<Props> = ({ profile }) => {
 
         <Grid.Column width={16}>
           {addPhotoMode ? (
-            <PhotoUploadWidget />
+            <PhotoUploadWidget loading={isUploading} uploadPhoto={handlePhotoUpload} />
           ) : (
-            <Card.Group itemsPerRow={5}>
+            <Card.Group itemsPerRow={5} stackable>
               {profile.photos?.map(photo => (
-                <Card key={photo.id}>
+                <Card raised key={photo.id}>
                   <Image src={photo.url} />
+                  {isCurrentUser && (
+                    <Button.Group fluid widths={2}>
+                      <Button
+                        basic
+                        color="green"
+                        content="Main"
+                        name={"main" + photo.id}
+                        disabled={photo.isMain}
+                        loading={target === "main" + photo.id && isLoading}
+                        onClick={e => handleSetMainPhoto(photo, e)}
+                      />
+
+                      <Button
+                        basic
+                        color="red"
+                        icon="trash"
+                        loading={target === photo.id && isLoading}
+                        onClick={e => handleDeletePhoto(photo, e)}
+                        disabled={photo.isMain}
+                        name={photo.id}
+                      />
+                    </Button.Group>
+                  )}
                 </Card>
               ))}
             </Card.Group>

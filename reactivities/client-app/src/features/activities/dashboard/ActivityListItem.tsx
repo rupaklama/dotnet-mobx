@@ -1,4 +1,5 @@
 import React from "react";
+import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { Button, Icon, Item, Label, Segment } from "semantic-ui-react";
@@ -70,4 +71,4 @@ const ActivityListItem: React.FC<Props> = ({ activity }) => {
   );
 };
 
-export default ActivityListItem;
+export default observer(ActivityListItem);

@@ -6,7 +6,7 @@ import store from "../stores/store";
 
 import { Activity, ActivityFormValues } from "./../models/activity";
 import { User, UserFormValues } from "../models/user";
-import { Profile } from "../models/profile";
+import { Photo, Profile } from "../models/profile";
 
 /* to delay the response */
 const sleep = (delay: number) => {
@@ -158,6 +158,24 @@ const Account = {
 /* user profile endpoints */
 const Profiles = {
   get: (username: string) => requests.get<Profile>(`/profiles/${username}`),
+
+  uploadPhotoApi: (file: Blob) => {
+    // FormData - Creates a new FormData object.
+    // FormData interface provides a way to easily construct a set of key/value pairs
+    // representing form fields and their values, which can then be easily sent using the XMLHttpRequest.
+    let formData = new FormData();
+
+    // Appends a new value onto an existing key inside a FormData object,
+    // or adds the key if it does not already exist.
+    // note - appending name should match name of the 'prop' in our Cloudinary api
+    formData.append("File", file);
+
+    return axios.post<Photo>("photos", formData, {
+      headers: { "Content-type": "multipart/form-data" },
+    });
+  },
+  setMainPhoto: (id: string) => requests.post(`/photos/${id}/setMain`, {}),
+  deletePhoto: (id: string) => requests.del(`/photos/${id}`),
 };
 
 /* Export Endpoints */

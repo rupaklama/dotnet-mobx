@@ -182,4 +182,9 @@ export default class UserStore {
   private stopRefreshTokenTimer() {
     clearTimeout(this.refreshTokenTimeout);
   }
+
+  // to set profile image
+  setImage = (image: string) => {
+    if (this.user) this.user.image = image;
+  };
 }
