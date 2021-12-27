@@ -100,4 +100,21 @@ export default class ProfileStore {
       console.log(err);
     }
   };
+
+  updateProfile = async (profile: Partial<Profile>) => {
+    this.isLoading = true;
+    try {
+      await agent.Profiles.updateProfile(profile);
+      runInAction(() => {
+        if (profile.displayName && profile.displayName !== store.userStore.user?.displayName) {
+          store.userStore.setDisplayName(profile.displayName);
+        }
+        this.profile = { ...this.profile, ...(profile as Profile) };
+        this.isLoading = false;
+      });
+    } catch (error) {
+      console.log(error);
+      runInAction(() => (this.isLoading = false));
+    }
+  };
 }
