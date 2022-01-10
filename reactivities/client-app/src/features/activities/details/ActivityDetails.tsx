@@ -15,13 +15,15 @@ import ActivityDetailedInfo from "./ActivityDetailedInfo";
 
 const ActivityDetails = () => {
   const { activityStore } = useStore();
-  const { selectedActivity: activity, loadActivity, isLoadingInitial } = activityStore;
+  const { selectedActivity: activity, loadActivity, isLoadingInitial, clearSelectedActivity } = activityStore;
 
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
     if (id) loadActivity(id);
-  }, [id, loadActivity]);
+
+    return () => clearSelectedActivity();
+  }, [clearSelectedActivity, id, loadActivity]);
 
   // note - instead of using optional operator '?' everywhere
   if (isLoadingInitial || !activity) return <Loading content="loading post details..." />;
@@ -31,7 +33,7 @@ const ActivityDetails = () => {
       <Grid.Column width={10}>
         <ActivityDetailedHeader activity={activity} />
         <ActivityDetailedInfo activity={activity} />
-        <ActivityDetailedChat />
+        <ActivityDetailedChat activityId={activity.id} />
       </Grid.Column>
 
       <Grid.Column width={6}>
