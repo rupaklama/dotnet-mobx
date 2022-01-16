@@ -24,8 +24,8 @@ const ProfileHeader: React.FC<Props> = ({ profile }) => {
 
         <Grid.Column width={7}>
           <Statistic.Group>
-            <Statistic label="Followers" value="5" />
-            <Statistic label="Following" value="42" />
+            <Statistic label="Followers" value={profile.followersCount} />
+            <Statistic label="Following" value={profile.followingCount} />
           </Statistic.Group>
 
           <Divider />

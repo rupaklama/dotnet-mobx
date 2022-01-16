@@ -126,7 +126,15 @@ const ActivityForm = () => {
               type="submit"
               content="Submit"
             />
-            <Button as={Link} to="/activities" floated="right" type="button" content="Cancel" />
+            <Button
+              as={Link}
+              to="/activities"
+              basic
+              color="red"
+              floated="right"
+              type="button"
+              content="Cancel"
+            />
           </Form>
         )}
       </Formik>

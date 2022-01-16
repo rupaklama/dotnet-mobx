@@ -77,7 +77,7 @@ export default observer(function ActivityDetailedHeader({ activity }: Props) {
               color="orange"
               floated="left"
             >
-              Manage Event
+              Manage Post
             </Button>
           </>
         ) : activity.isGoing ? (

@@ -29,15 +29,15 @@ const ActivityDetails = () => {
   if (isLoadingInitial || !activity) return <Loading content="loading post details..." />;
 
   return (
-    <Grid>
-      <Grid.Column width={10}>
+    <Grid container>
+      <Grid.Column mobile={16} tablet={6} largeScreen={6} widescreen={6}>
+        <ActivityDetailedSidebar activity={activity} />
+      </Grid.Column>
+
+      <Grid.Column mobile={16} tablet={10} largeScreen={10} widescreen={10}>
         <ActivityDetailedHeader activity={activity} />
         <ActivityDetailedInfo activity={activity} />
         <ActivityDetailedChat activityId={activity.id} />
-      </Grid.Column>
-
-      <Grid.Column width={6}>
-        <ActivityDetailedSidebar activity={activity} />
       </Grid.Column>
     </Grid>
   );

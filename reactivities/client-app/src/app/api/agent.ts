@@ -55,7 +55,7 @@ axios.interceptors.response.use(
     // data - errors object
     // status - http codes
     // config - http methods with 'config.method'
-    const { data, status, config, headers } = err.response!; // ! - turning off TS on this line
+    const { data, status, config, headers } = err.response!;
     console.log(err.response);
 
     // depending on Http Codes to handle error response
@@ -177,6 +177,7 @@ const Profiles = {
   setMainPhoto: (id: string) => requests.post(`/photos/${id}/setMain`, {}),
   deletePhoto: (id: string) => requests.del(`/photos/${id}`),
   updateProfile: (profile: Partial<Profile>) => requests.put(`/profiles`, profile),
+  updateFollowing: (username: string) => requests.post(`/follow/${username}`, {}),
 };
 
 /* Export Endpoints */

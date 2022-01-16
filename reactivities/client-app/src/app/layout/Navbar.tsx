@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 
 import { Link, NavLink } from "react-router-dom";
-import { Button, Container, Dropdown, Image, Menu } from "semantic-ui-react";
+import { Button, Container, Dropdown, Grid, Icon, Image, Label, Menu } from "semantic-ui-react";
 
 import { useStore } from "../stores/store";
 
@@ -18,12 +18,30 @@ const Navbar = () => {
           Kam Post Events
         </Menu.Item>
 
-        <Menu.Item as={NavLink} to="/activities" name="Posts" />
-        <Menu.Item as={NavLink} to="/errors" name="Errors" />
+        {/* <Menu.Item as={NavLink} to="/activities" name="Posts" /> */}
+        {/* <Menu.Item as={NavLink} to="/errors" name="Errors" /> */}
 
-        <Menu.Item>
-          <Button as={NavLink} to="/createActivity" positive content="Create New Post" />
-        </Menu.Item>
+        <Grid centered container>
+          <Grid.Column width={10}>
+            <Menu.Item>
+              <Button labelPosition="right" as={NavLink} to="/activities" name="Posts">
+                <Button color="red">
+                  <Icon name="heart" />
+                  Recent Posts
+                </Button>
+                <Label basic color="red" pointing="left">
+                  Click here!
+                </Label>
+              </Button>
+            </Menu.Item>
+          </Grid.Column>
+
+          <Grid.Column width={6}>
+            <Menu.Item>
+              <Button as={NavLink} to="/createActivity" positive content="Create New Post" />
+            </Menu.Item>
+          </Grid.Column>
+        </Grid>
 
         <Menu.Item position="right">
           <Image src={user?.image || "/assets/user.png"} avatar spaced="right" />

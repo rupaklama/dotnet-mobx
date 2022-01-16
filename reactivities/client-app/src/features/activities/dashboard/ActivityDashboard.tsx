@@ -25,13 +25,13 @@ const ActivityDashboard = () => {
   if (activityStore.isLoadingInitial) return <Loading content="loading posts" />;
 
   return (
-    <Grid>
-      <Grid.Column width="10">
-        <ActivityList />
+    <Grid centered container style={{ marginTop: "-5em" }}>
+      <Grid.Column mobile={16} tablet={6} largeScreen={6} widescreen={6}>
+        <ActivityFilters />
       </Grid.Column>
 
-      <Grid.Column width="6">
-        <ActivityFilters />
+      <Grid.Column mobile={16} tablet={10} largeScreen={10} widescreen={10}>
+        <ActivityList />
       </Grid.Column>
     </Grid>
   );

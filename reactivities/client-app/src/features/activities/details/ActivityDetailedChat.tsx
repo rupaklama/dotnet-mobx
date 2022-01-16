@@ -44,7 +44,7 @@ export default observer(function ActivityDetailedChat({ activityId }: Props) {
                     <Loader active={isSubmitting} />
 
                     <textarea
-                      placeholder="Write your comment (Enter to submit)"
+                      placeholder="Write your comment here..."
                       rows={2}
                       {...props.field}
                       onKeyPress={e => {

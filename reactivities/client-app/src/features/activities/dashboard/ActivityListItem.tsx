@@ -20,12 +20,12 @@ const ActivityListItem: React.FC<Props> = ({ activity }) => {
         )}
         <Item.Group>
           <Item>
-            <Item.Image
+            {/* <Item.Image
               style={{ margin: "auto" }}
               size="tiny"
               circular
               src={activity.host?.image || "/assets/user.png"}
-            />
+            /> */}
             <Item.Content>
               <Item.Header as={Link} to={`/activities/${activity.id}`}>
                 {activity.title}

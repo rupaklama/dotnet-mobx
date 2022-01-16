@@ -240,16 +240,17 @@ class ActivityStore {
     }
   };
 
-  //   updateAttendeeFollowing = (username: string) => {
-  //     this.activities.forEach(activity => {
-  //         activity.attendees.forEach(attendee => {
-  //             if (attendee.username === username) {
-  //                 attendee.following ? attendee.followersCount-- : attendee.followersCount++;
-  //                 attendee.following = !attendee.following;
-  //             }
-  //         })
-  //     })
-  // }
+  /* to update attendee following status */
+  updateAttendeeFollowing = (username: string) => {
+    this.activities.forEach(activity => {
+      activity.attendees.forEach(attendee => {
+        if (attendee.username === username) {
+          attendee.following ? attendee.followersCount-- : attendee.followersCount++;
+          attendee.following = !attendee.following;
+        }
+      });
+    });
+  };
 
   clearSelectedActivity = () => {
     this.selectedActivity = undefined;
