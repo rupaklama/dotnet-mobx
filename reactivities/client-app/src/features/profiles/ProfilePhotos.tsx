@@ -33,7 +33,7 @@ const ProfilePhotos: React.FC<Props> = ({ profile }) => {
 
   return (
     <Tab.Pane>
-      <Grid>
+      <Grid container>
         <Grid.Column width={16}>
           <Header floated="left" icon="image" content="Photos" />
           {isCurrentUser && (
@@ -50,7 +50,7 @@ const ProfilePhotos: React.FC<Props> = ({ profile }) => {
           {addPhotoMode ? (
             <PhotoUploadWidget loading={isUploading} uploadPhoto={handlePhotoUpload} />
           ) : (
-            <Card.Group itemsPerRow={5} stackable>
+            <Card.Group itemsPerRow={3} stackable>
               {profile.photos?.map(photo => (
                 <Card raised key={photo.id}>
                   <Image src={photo.url} />

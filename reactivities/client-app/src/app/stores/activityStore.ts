@@ -245,7 +245,10 @@ class ActivityStore {
     this.activities.forEach(activity => {
       activity.attendees.forEach(attendee => {
         if (attendee.username === username) {
+          // if following current user, unfollow on click & update the count
+          // else follow user & update the count
           attendee.following ? attendee.followersCount-- : attendee.followersCount++;
+          // updating following flag - true or false
           attendee.following = !attendee.following;
         }
       });

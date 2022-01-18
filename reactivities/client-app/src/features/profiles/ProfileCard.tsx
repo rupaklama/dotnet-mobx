@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Card, Icon, Image } from "semantic-ui-react";
 
 import { Profile } from "../../app/models/profile";
+import FollowButton from "./FollowButton";
 
 interface Props {
   profile: Profile;
@@ -10,12 +11,12 @@ interface Props {
 const ProfileCard: React.FC<Props> = ({ profile }) => {
   const truncate = (str: string | undefined) => {
     if (str) {
-      return str.length > 40 ? str.substring(0, 37) + "..." : str;
+      return str.length > 40 ? str.substring(0, 10) + "..." : str;
     }
   };
 
   return (
-    <Card as={Link} to={`/profiles/${profile.username}`} fluid>
+    <Card as={Link} to={`/profiles/${profile.username}`} fluid centered>
       <Image src={profile.image || "/assets/user.png"} />
       <Card.Content>
         <Card.Header>{profile.displayName}</Card.Header>
@@ -25,6 +26,7 @@ const ProfileCard: React.FC<Props> = ({ profile }) => {
         <Icon name="user" />
         {profile.followersCount || 0} followers
       </Card.Content>
+      <FollowButton profile={profile} />
     </Card>
   );
 };

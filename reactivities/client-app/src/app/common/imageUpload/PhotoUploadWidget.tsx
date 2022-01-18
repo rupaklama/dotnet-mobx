@@ -32,13 +32,13 @@ const PhotoUploadWidget: React.FC<Props> = ({ loading, uploadPhoto }) => {
   }, [files]);
 
   return (
-    <Grid>
+    <Grid container stackable>
       <Grid.Column width={4}>
         <Header sub color="teal" content="Step 1: Add Photo" />
         <PhotoWidgetDropzone setFiles={setFiles} />
       </Grid.Column>
       <Grid.Column width={1} />
-      <Grid.Column width={4}>
+      <Grid.Column width={6}>
         <Header sub color="teal" content="Step 2: Resize Image" />
         {files && files.length > 0 && (
           <PhotoWidgetCropper setCropper={setCropper} imagePreview={files[0].preview} />

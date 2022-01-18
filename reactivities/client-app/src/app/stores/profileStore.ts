@@ -1,18 +1,37 @@
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable, reaction, runInAction } from "mobx";
 import agent from "../api/agent";
 import { Photo, Profile } from "../models/profile";
 import store from "./store";
 
 export default class ProfileStore {
+  // profile is for current user or other user
   profile: Profile | null = null;
   isLoadingProfile = false;
   isUploading = false;
   isLoading = false;
+  isLoadingFollowings = false;
   followings: Profile[] = [];
+  activeTab = 0;
 
   constructor() {
     makeAutoObservable(this);
+
+    reaction(
+      () => this.activeTab,
+      activeTab => {
+        if (activeTab === 3 || activeTab === 4) {
+          const predicate = activeTab === 3 ? "followers" : "following";
+          this.loadFollowings(predicate);
+        } else {
+          this.followings = [];
+        }
+      }
+    );
   }
+
+  setActiveTab = (activeTab: any) => {
+    this.activeTab = activeTab;
+  };
 
   /* to find if current profile is of current auth user */
   get isCurrentUser() {
@@ -119,9 +138,12 @@ export default class ProfileStore {
     }
   };
 
+  /**
+   * @param  {string} username
+   * @param  {boolean} following - helper parameter to change status
+   */
   updateFollowing = async (username: string, following: boolean) => {
     this.isLoading = true;
-
     try {
       await agent.Profiles.updateFollowing(username);
       store.activityStore.updateAttendeeFollowing(username);
@@ -148,6 +170,21 @@ export default class ProfileStore {
     } catch (err) {
       console.log(err);
       runInAction(() => (this.isLoading = false));
+    }
+  };
+
+  loadFollowings = async (predicate: string) => {
+    this.isLoadingFollowings = true;
+
+    try {
+      const followings = await agent.Profiles.listFollowings(this.profile!.username, predicate);
+      runInAction(() => {
+        this.followings = followings;
+        this.isLoadingFollowings = false;
+      });
+    } catch (err) {
+      console.error(err);
+      runInAction(() => (this.isLoadingFollowings = false));
     }
   };
 }

@@ -12,7 +12,7 @@ interface Props {
 
 const styles = {
   borderColor: "orange",
-  borderWidth: 2,
+  borderWidth: 2.5,
 };
 
 const ActivityListItemAttendee: React.FC<Props> = ({ attendees }) => {
