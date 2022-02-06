@@ -7,6 +7,7 @@ import store from "../stores/store";
 import { Activity, ActivityFormValues } from "./../models/activity";
 import { User, UserFormValues } from "../models/user";
 import { Photo, Profile } from "../models/profile";
+import { PaginatedResult } from "../models/pagination";
 
 /* to delay the response */
 const sleep = (delay: number) => {
@@ -31,8 +32,7 @@ axios.interceptors.request.use(config => {
   return config;
 });
 
-/* Delaying Axios Response on development with Interceptors */
-/* to intercept api response & do something with it */
+/* Intercepting axios response to do something with it */
 axios.interceptors.response.use(
   async response => {
     /* try {
@@ -46,7 +46,18 @@ axios.interceptors.response.use(
 
     /* We don't want try/catch block like above now because we want to use second arg - onRejected */
 
-    await sleep(1000);
+    /* Delaying Axios Response on development with Interceptors */
+    /* to intercept api response & do something with it */
+    if (process.env.NODE_ENV === "development") await sleep(1000);
+
+    /* to return paginated data based on the pagination query in the header response */
+    const pagination = response.headers["pagination"];
+    if (pagination) {
+      response.data = new PaginatedResult(response.data, JSON.parse(pagination));
+      return response as AxiosResponse<PaginatedResult<any>>;
+    }
+
+    /* else - return normal response */
     return response;
   },
   /* onRejected - to handle Server Error Responses */
@@ -139,7 +150,10 @@ const requests = {
 
 /* Activities Endpoints */
 const Activities = {
-  list: () => requests.get<Activity[]>("/activities"),
+  list: (params: URLSearchParams) =>
+    // using axios.get since passing `params` as object here
+    // `then` since not using our requests.get method
+    axios.get<PaginatedResult<Activity[]>>("/activities", { params }).then(responseBody),
   details: (id: string) => requests.get<Activity>(`/activities/${id}`),
   create: (activity: ActivityFormValues) => requests.post<void>("/activities", activity),
   update: (activity: ActivityFormValues) => requests.put<void>(`/activities/${activity.id}`, activity),
