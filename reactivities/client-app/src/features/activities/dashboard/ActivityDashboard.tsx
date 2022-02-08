@@ -16,6 +16,7 @@ import { PagingParams } from "../../../app/models/pagination";
 const ActivityDashboard = () => {
   const { activityStore } = useStore();
   const { loadActivities, activities, setPagingParams, pagination } = activityStore;
+  console.log(pagination);
 
   // Logging observables with mobx built in method - toJS
   console.log(toJS(activityStore.activities));

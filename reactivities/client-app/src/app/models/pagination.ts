@@ -8,6 +8,9 @@ export interface Pagination {
 // helper class to get access to pagination data inside the response header
 // reusable paginated class for any data types
 export class PaginatedResult<T> {
+  forEach(arg0: (activity: import("./activity").Activity) => void) {
+    throw new Error("Method not implemented.");
+  }
   data: T;
   pagination: Pagination;
 

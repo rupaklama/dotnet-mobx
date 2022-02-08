@@ -44,14 +44,13 @@ const App = () => {
   if (!isAppLoaded) return <Loading content="loading app..." />;
 
   return (
+    // provide React Query client to App
+    // our app has access to Queries & Cache now as well as react query hooks
     <>
       <ToastContainer position="top-center" hideProgressBar />
-
       {/* note - Modal should be open from anywhere in our app, just like Toast above. High/top level in our app */}
       <ModalContainer />
-
       <Route exact path="/" component={HomePage} />
-
       <Route
         // any routes that matches '/+routes' is going to match this particular route
         path={"/(.+)"}
@@ -81,6 +80,7 @@ const App = () => {
           </>
         )}
       />
+      {/* <ReactQueryDevtools /> */}
     </>
   );
 };
