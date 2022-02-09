@@ -152,10 +152,8 @@ const requests = {
 
 /* Activities Endpoints */
 const Activities = {
-  list: (params: URLSearchParams) =>
-    // using axios.get since passing `params` as object here
-    // `then` since not using our requests.get method
-    axios.get<PaginatedResult<Activity[]>>("/activities", { params }).then(responseBody),
+  list: (pageNum: number) =>
+    axios.get<Activity[]>(`/activities?pageNumber=${pageNum}&pageSize=5`).then(responseBody),
   details: (id: string) => requests.get<Activity>(`/activities/${id}`),
   create: (activity: ActivityFormValues) => requests.post<void>("/activities", activity),
   update: (activity: ActivityFormValues) => requests.put<void>(`/activities/${activity.id}`, activity),

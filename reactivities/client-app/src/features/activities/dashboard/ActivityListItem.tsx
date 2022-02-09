@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { Button, Icon, Item, Label, Segment } from "semantic-ui-react";
 
 import { Activity } from "../../../app/models/activity";
@@ -16,7 +16,7 @@ const ActivityListItem: React.FC<Props> = ({ activity }) => {
     <Segment.Group>
       <Segment>
         {activity.isCancelled && (
-          <Label attached="top" color="red" content="Cancelled" style={{ textAlign: "center" }} />
+          <Label attached="top" color="red" content="Closed" style={{ textAlign: "center" }} />
         )}
         <Item.Group>
           <Item>
@@ -43,7 +43,7 @@ const ActivityListItem: React.FC<Props> = ({ activity }) => {
               {activity.isGoing && !activity.isHost && (
                 <Item.Description>
                   <Label basic color="green">
-                    You are attending to this post
+                    You are joining to this post
                   </Label>
                 </Item.Description>
               )}
@@ -54,7 +54,8 @@ const ActivityListItem: React.FC<Props> = ({ activity }) => {
 
       <Segment>
         <span>
-          <Icon name="clock" /> {format(activity.date!, "dd MMM yyy h:mm aa")}
+          <Icon name="clock" />
+          {/* {format(activity.date!, "dd MMM yyy h:mm aa")} */}
           <Icon name="marker" /> {activity.venue}
         </span>
       </Segment>

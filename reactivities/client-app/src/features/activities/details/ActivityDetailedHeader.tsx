@@ -36,7 +36,7 @@ export default observer(function ActivityDetailedHeader({ activity }: Props) {
             style={{ position: "absolute", zIndex: 1000, left: -14, top: 20 }}
             ribbon
             color="red"
-            content="Cancelled"
+            content="Closed"
           />
         )}
         <Image src={`/assets/categoryImages/${activity.category}.jpg`} fluid style={activityImageStyle} />
@@ -65,7 +65,7 @@ export default observer(function ActivityDetailedHeader({ activity }: Props) {
               color={activity.isCancelled ? "green" : "red"}
               floated="left"
               basic
-              content={activity.isCancelled ? "Re-activate Post" : "Cancel Post"}
+              content={activity.isCancelled ? "Re-activate Post" : "Close Post"}
               onClick={cancelActivityToggle}
               loading={isLoading}
               style={{ marginBottom: "10px" }}
@@ -77,7 +77,7 @@ export default observer(function ActivityDetailedHeader({ activity }: Props) {
               color="orange"
               floated="left"
             >
-              Manage Post
+              Edit Post
             </Button>
           </>
         ) : activity.isGoing ? (

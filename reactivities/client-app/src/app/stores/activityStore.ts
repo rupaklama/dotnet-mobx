@@ -1,6 +1,6 @@
 import { PagingParams } from "./../models/pagination";
 import { format } from "date-fns";
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable, reaction, runInAction } from "mobx";
 
 import agent from "../api/agent";
 import { Pagination } from "../models/pagination";
@@ -25,94 +25,9 @@ class ActivityStore {
     makeAutoObservable(this);
   }
 
-  // COMPUTED FUNCTIONS
-  // note - Computed values are use when doing operations on Observable state
-  // such as filtering, expensive calculations etc. and cache it's output for optimization
-
-  // computed property to return activities by date
-  // Computed values can be used to derive information from other observables.
-  // They evaluate lazily, caching their output and only recomputing if one of the underlying observables has changed.
-  // computed - values marks as a getter that will derive new facts from the state and cache its output
-  // Computed values can be created by annotating JavaScript getters with computed value
-  get activitiesByDate() {
-    return this.activities.slice().sort((a, b) => a.date!.getTime() - b.date!.getTime());
-  }
-
-  // new array of objects with key of activity date & value as array of activities created on that particular date
-  // 2022-03-19: [Proxy, Proxy]
-  get groupedActivities() {
-    return Object.entries(
-      this.activitiesByDate.reduce((activities, activity) => {
-        // const date = format(activity.date!, "dd MMM yyyy");
-        // date is the key
-        const date = format(activity.date!, "dd MMM yyyy");
-        // if we have another activity with this particular date, add it into the 'key' list of same date
-        activities[date] = activities[date] ? [...activities[date], activity] : [activity];
-
-        return activities;
-      }, {} as { [key: string]: Activity[] }) // type annotation - {2022-03-19: Array(1)}
-    );
-  }
-
-  get axiosParams() {
-    // URLSearchParams interface defines utility methods to work with the query string of a URL
-    const params = new URLSearchParams();
-    // Appends a specified key/value pair as a new search parameter
-    params.append("pageNumber", this.pagingParams.pageNumber.toString());
-    params.append("pageSize", this.pagingParams.pageSize.toString());
-    // this.predicate.forEach((value, key) => {
-    //   if (key === "startDate") {
-    //     params.append(key, (value as Date).toISOString());
-    //   } else {
-    //     params.append(key, value);
-    //   }
-    // });
-    return params;
-  }
-
   // ACTIONS
   setPagingParams = (pagingParams: PagingParams) => {
     this.pagingParams = pagingParams;
-  };
-
-  loadActivities = async () => {
-    this.isLoadingInitial = true;
-
-    // note - async code goes inside try/catch
-    try {
-      // note - we can mutate data directly in mobx
-      const result = await agent.Activities.list(this.axiosParams);
-      console.log(result);
-
-      result.forEach((activity: Activity) => {
-        // modifying date
-        // activity.date = activity.date.split("T")[0];
-        // adding updated activity in our list
-        // this.activities.push(activity);
-        this.setActivity(activity);
-      });
-
-      // Since strict-mode is enabled, changing (observed) observable values without using an action is not allowed
-      // To resolve above issue when using async/await syntax, runInAction()
-      // https://mobx.js.org/actions.html#asynchronous-actions
-      runInAction(() => {
-        // updating state
-
-        // The reason for doing this is every step (tick) that updates observables in an
-        // asynchronous process should be marked as action.
-        // Any steps after await aren't in the same tick/step, so they require action wrapping.
-        this.isLoadingInitial = false;
-      });
-      this.setPagination(result.pagination);
-    } catch (err) {
-      console.error(err);
-      runInAction(() => {
-        this.isLoadingInitial = false;
-      });
-
-      // note - if not using runInAction
-      // this.setIsLoadingInitial(false)
-    }
   };
 
   /* set pagination when loading activities */
@@ -291,6 +206,51 @@ class ActivityStore {
   clearSelectedActivity = () => {
     this.selectedActivity = undefined;
   };
+
+  // COMPUTED FUNCTIONS
+  // note - Computed values are use when doing operations on Observable state
+  // such as filtering, expensive calculations etc. and cache it's output for optimization
+
+  // computed property to return activities by date
+  // Computed values can be used to derive information from other observables.
+  // They evaluate lazily, caching their output and only recomputing if one of the underlying observables has changed.
+  // computed - values marks as a getter that will derive new facts from the state and cache its output
+  // Computed values can be created by annotating JavaScript getters with computed value
+  get activitiesByDate() {
+    return this.activities.slice().sort((a, b) => a.date!.getTime() - b.date!.getTime());
+  }
+
+  // new array of objects with key of activity date & value as array of activities created on that particular date
+  // 2022-03-19: [Proxy, Proxy]
+  get groupedActivities() {
+    return Object.entries(
+      this.activitiesByDate.reduce((activities, activity) => {
+        // const date = format(activity.date!, "dd MMM yyyy");
+        // date is the key
+        const date = format(activity.date!, "dd MMM yyyy");
+        // if we have another activity with this particular date, add it into the 'key' list of same date
+        activities[date] = activities[date] ? [...activities[date], activity] : [activity];
+
+        return activities;
+      }, {} as { [key: string]: Activity[] }) // type annotation - {2022-03-19: Array(1)}
+    );
+  }
+
+  get axiosParams() {
+    // URLSearchParams interface defines utility methods to work with the query string of a URL
+    const params = new URLSearchParams();
+    // Appends a specified key/value pair as a new search parameter
+    params.append("pageNumber", this.pagingParams.pageNumber.toString());
+    params.append("pageSize", this.pagingParams.pageSize.toString());
+    // this.predicate.forEach((value, key) => {
+    //   if (key === "startDate") {
+    //     params.append(key, (value as Date).toISOString());
+    //   } else {
+    //     params.append(key, value);
+    //   }
+    // });
+    return params;
+  }
 }
 
 export default ActivityStore;

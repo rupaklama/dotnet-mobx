@@ -21,6 +21,16 @@ import ModalContainer from "./ModalContainer";
 
 import ProfilePage from "../../features/profiles/ProfilePage";
 
+// QueryClient - manages queries & cache.
+// QueryClientProvider - provides cache & client config to children which takes above query client as the value.
+import { QueryClient, QueryClientProvider } from "react-query";
+
+// default react query dev tools
+import { ReactQueryDevtools } from "react-query/devtools";
+
+// creating query client
+const queryClient = new QueryClient();
+
 const App = () => {
   const location = useLocation();
 
@@ -46,7 +56,7 @@ const App = () => {
   return (
     // provide React Query client to App
     // our app has access to Queries & Cache now as well as react query hooks
-    <>
+    <QueryClientProvider client={queryClient}>
       <ToastContainer position="top-center" hideProgressBar />
       {/* note - Modal should be open from anywhere in our app, just like Toast above. High/top level in our app */}
       <ModalContainer />
@@ -80,8 +90,8 @@ const App = () => {
           </>
         )}
       />
-      {/* <ReactQueryDevtools /> */}
-    </>
+      <ReactQueryDevtools />
+    </QueryClientProvider>
   );
 };
 
